@@ -30,5 +30,14 @@ class Shopping_routine_tests(unittest.TestCase):
         res = board_checks.BoardChecks.is_construction_too_close(self.board,construction_placement)
         self.assertFalse(res)
 
+    def test_does_player_have_connecting_road_to_coordinate(self):
+        construction_placement=[(2,2),(1,3),(2,3)]
+        player = models.Player("name",models.Card_collection([]))
+
+        board_checks.BoardChecks.does_player_have_connecting_road_to_coordinate(self.board,player,construction_placement,is_first_round=True)
+
+
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -53,22 +53,57 @@ class BoardChecks:
             if BoardChecks.is_construction_too_close(board,placement):
                 return False #existing town or city is too close to placement
 
-        #for rounds that are not first round, the player needs to have a road connected to whatever its building
+        if not BoardChecks.does_player_have_connecting_road_to_coordinate(board,player,placement,is_first_round=is_first_round):
+            return False #player doesn't have a road connecting to placement
+
+        return True
+
+
 
 
         #does player have a road close enough?
     ##does player have a construction close enough? allways neighbouring road
 
     @staticmethod
-    def does_player_have_connecting_road_to_coordinate(board:models.Board, player: models.Player, placement: list[tuple[int,int]],is_first_round):
+    def does_player_have_connecting_road_to_coordinate(board:models.Board, player: models.Player, placement: list[tuple[int,int]],is_first_round) -> bool:
         if not is_first_round:
             if BoardChecks.location_is_town_or_city(placement):
-                pass
-            elif: ##add check if is road
-                tile1_neighbours = BoardChecks.coordinates_to_tile(placement[0]).adjecent_tile_coordinates
-                tile2_neighbours = BoardChecks.coordinates_to_tile(placement[1]).adjecent_tile_coordinates
+                for construction in board.constructions:
+                    if isinstance(construction, models.constructions.Road) and construction.owner == player:
+                        tile1_coordinates = placement[0]
+                        tile2_coordinates = placement[1]
+                        tile3_coordinates = placement[2]
+                        construction_coordinates = construction.location.sort()
+                        if (construction_coordinates == [tile1_coordinates,tile2_coordinates].sort()
+                                or construction_coordinates == [tile1_coordinates,tile3_coordinates].sort()
+                                or construction_coordinates == [tile2_coordinates,tile3_coordinates].sort()):
+                            return True
 
-                tile3_neighbours, tile4_neighbours = intersection(tile1_neighbours,tile2_neighbours)
+
+            else: #is road
+                tile1_coordinates = placement[0]
+                tile2_coordinates = placement[1]
+
+                tile1_neighbours = BoardChecks.coordinates_to_tile(tile1_coordinates).adjecent_tile_coordinates
+                tile2_neighbours = BoardChecks.coordinates_to_tile(tile2_coordinates).adjecent_tile_coordinates
+
+                tile3_coordinates, tile4_coordinates = intersection(tile1_neighbours,tile2_neighbours)
+
+                for construction in board.constructions:
+                    if isinstance(construction,models.constructions.Road) and construction.owner == player:
+                        construction_coordinates = construction.location.sort()
+                        if (construction_coordinates == [tile1_coordinates, tile3_coordinates].sort()
+                                or construction_coordinates == [tile1_coordinates, tile4_coordinates].sort()
+                                or construction_coordinates == [tile2_coordinates, tile3_coordinates].sort()
+                                or construction_coordinates == [tile2_coordinates, tile4_coordinates].sort()):
+                            return True
+        False
+
+
+
+
+
+                ##check if there is road between (tile 1 and tuke 3 or 4) OR (tile 2 and 3 or 4)
 
         # is road,
 
